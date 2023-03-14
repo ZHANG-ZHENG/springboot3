@@ -5,3 +5,7 @@ spring:
     username: root
     password: password@Mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
+# 配置日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
