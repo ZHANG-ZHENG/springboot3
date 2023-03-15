@@ -27,3 +27,5 @@ ALTER TABLE user
 	ADD COLUMN version int NULL default 1 COMMENT '乐观锁',
 	ADD COLUMN create_time datetime NULL COMMENT '创建时间',
 	ADD COLUMN update_time datetime NULL COMMENT '更新时间';
+
+操作案例：在SampleTest类下
