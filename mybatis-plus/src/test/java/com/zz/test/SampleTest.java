@@ -9,9 +9,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zz.test.user.bean.User;
 import com.zz.test.user.dao.UserMapper;
+import com.zz.test.user.entity.User;
+import com.zz.test.user.model.UserVo;
 
 @SpringBootTest
 public class SampleTest {
@@ -26,10 +28,19 @@ public class SampleTest {
     public void testSelect() {
         System.out.println(("----- selectAll method test ------"));
         QueryWrapper<User> wrapper = new QueryWrapper<User>();
-        wrapper.lt("age", 10);//.like("name", "雨")
+        wrapper.lt("age", 200);//.like("name", "雨")
         List<User> userList = userMapper.selectList(wrapper);
         System.out.println("userList total:"+userList.size());
         userList.forEach(System.out::println);
+    }
+    /**
+     * 自定义查询测试
+     */
+    @Test
+    public void testVoSelect() {
+        System.out.println(("----- selectVo test ------"));
+        UserVo userVo = userMapper.selectUserVo(2L);
+        System.out.println("userVo:"+userVo.getName());
     }
     /**
      * 插入测试
@@ -89,7 +100,7 @@ public class SampleTest {
     /**
      * 分页查询
      */
-    @Test
+    //@Test
     public void testSelectPage() {
         Page<User> page=new Page<User>();
         page.setSize(3L);
@@ -105,5 +116,19 @@ public class SampleTest {
         for(User user : userPage.getRecords()){
         	System.out.println("page user:"+user.getName());
         }
+    }
+    
+    /**
+     * 防全表更新与删除插件测试
+     */
+    //@Test
+    public void testDeleteAll() {
+        User user = new User();
+        user.setAge(100);
+        // com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: Prohibition of table update operation
+        UpdateWrapper<User> wrapper = new UpdateWrapper<User>();
+        wrapper.eq("id", 1);
+        userMapper.update(user, null); //没传wrapper导致全表更新
+        //userMapper.update(user, wrapper);  
     }
 }

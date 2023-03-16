@@ -1,4 +1,4 @@
-package com.zz.test.user.bean;
+package com.zz.test.user.entity;
 
 import javax.xml.crypto.Data;
 
