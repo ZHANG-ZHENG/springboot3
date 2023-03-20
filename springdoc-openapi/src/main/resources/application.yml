@@ -1,0 +1,8 @@
+springdoc:
+  api-docs:
+    enabled: true
+  openapi:
+    info:
+      title: your-api-title
+      description: your-api-description
+      version: your-api-version
