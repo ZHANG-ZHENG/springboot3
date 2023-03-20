@@ -37,3 +37,5 @@ druid官网：
 
 工程启动后测试访问：http://localhost:8080/test/test1
 工程启动后druid访问：http://localhost:8080/druid/index.html
+
+druid web监控没整合成功，官网最新的包也不是依赖spring3.x编译的，感觉是servlet-api变更引起。druid继续关注官网最新。
