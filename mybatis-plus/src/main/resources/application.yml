@@ -1,7 +1,22 @@
 # DataSource Config
 spring:
   datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://172.26.180.229:3306/zz_test?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&serverTimezone=${app.defaultTimeZone:Asia/Shanghai}
     username: root
     password: password@Mysql
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      max-active: 50
+      #配置Druid监控页面
+      stat-view-servlet:
+        enabled: true
+        url-pattern: '/druid/*'
+        reset-enable: false # 禁用HTML页面上的“Reset All”功能
+        login-username: admin
+        login-password: admin  
+    filters: stat,wall,log4j    
+# 配置日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

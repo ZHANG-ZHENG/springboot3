@@ -29,3 +29,11 @@ ALTER TABLE user
 	ADD COLUMN update_time datetime NULL COMMENT '更新时间';
 
 操作案例：在SampleTest类下
+
+druid官网：
+	https://github.com/alibaba/druid/tree/master/druid-spring-boot-starter
+	https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter
+
+
+工程启动后测试访问：http://localhost:8080/test/test1
+工程启动后druid访问：http://localhost:8080/druid/index.html
