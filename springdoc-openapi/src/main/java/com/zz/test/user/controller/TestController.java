@@ -11,7 +11,7 @@ import com.zz.test.user.model.UserVo;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
@@ -31,9 +31,8 @@ public class TestController {
 	 */
 	@PostMapping(value = "/test2")
 	@Operation(summary = "单一参数接口2", description = "单一参数接口说明")
-	@ApiResponse(description = "返回更新的用户")
     public String test2(@RequestBody @Parameter(description = "姓名") String name) {
-		return "test2:"+name;
+		return "更新用户:"+name;
     }
 	/**
 	 * 对象参数接口
