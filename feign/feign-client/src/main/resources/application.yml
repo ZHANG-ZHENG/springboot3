@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: feign-client
+
+server:
+  port: 7001
+  servlet:
+    context-path: /feign-client
