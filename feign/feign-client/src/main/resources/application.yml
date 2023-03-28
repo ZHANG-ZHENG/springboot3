@@ -6,3 +6,11 @@ server:
   port: 7001
   servlet:
     context-path: /feign-client
+
+#health：http://localhost:7001/feign-client/actuator/health
+#info：http://localhost:7001/feign-client/actuator/info    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
