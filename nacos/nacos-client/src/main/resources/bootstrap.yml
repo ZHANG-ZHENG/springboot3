@@ -1,0 +1,35 @@
+server:
+  port: 6911
+  servlet:
+    context-path: /nacos-client
+spring:
+  profiles:
+    active: dev
+  application:
+    name: nacos-client
+
+
+
+#health：http://localhost:7001/feign-client/actuator/health
+#info：http://localhost:7001/feign-client/actuator/info    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+       
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 5000
+        loggerLevel: full
+      timeout10s:
+        connectTimeout: 2000
+        readTimeout: 10000
+        loggerLevel: full
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true     

@@ -1,0 +1,24 @@
+server:
+  port: 6901
+  servlet:
+    context-path: /nacos-server
+spring:
+  application:
+    name: nacos-server
+  profiles: 
+    active: dev
+  cloud:
+    nacos:
+      discovery:    
+        server-addr: 127.0.0.1:8848
+        password: nacos
+        username: nacos
+        #namespace: dev #隔离各个服务，比如dev，test
+        #group: MY_GROUP
+      config:
+        server-addr: 127.0.0.1:8848
+        #namespace: dev 
+        #group: MY_GROUP
+        #prefix: nacos-config #prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix
+        file-extension: yaml
+        #refresh-enabled: false #nacos客户端将无法感知配置的变化
