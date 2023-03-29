@@ -18,12 +18,20 @@ public class TestController {
 	private FeignServer feignServer;
 	
 	@RequestMapping("/test1")
-	public String hello() {
+	public String test1() {
 		String feignServerTest1 =  feignServer.test1();
 		//String feignServerTest1 = "zz";
 		return "Hello Client,"+feignServerTest1;
 	}
 
-
+	/**
+	 * http://localhost:7002/resilience4j/test/test2
+	 */
+	@RequestMapping("/test2")
+	public String test2() {
+		String feignServerTest1 =  feignServer.sleep(1000);
+		//String feignServerTest1 = "zz";
+		return "Hello Client test2,"+feignServerTest1;
+	}
 	
 }

@@ -29,39 +29,41 @@ resilience4j:
   circuitbreaker:
     configs:
       default:
-        #以百分⽐配置失败率阈值。当失败率等于或⼤于阈值时，断路器状态并关闭变为开启，并进⾏服务降级。
-        failureRateThreshold: 50
-        #以百分⽐的⽅式配置，断路器把调⽤时间⼤于slowCallDurationThreshold的调⽤视为慢调⽤，当慢调⽤⽐例⼤于等于阈值时，断路器开启，并进⾏服务降级。
-        slowCallRateThreshold: 90
-        #配置调⽤时间的阈值，⾼于该阈值的呼叫视为慢调⽤，并增加慢调⽤⽐例。
-        slowCallDurationThreshold: 100000
-        #断路器在半开状态下允许通过的调⽤次数。
-        permittedNumberOfCallsInHalfOpenState: 5
-        #断路器在半开状态下的最⻓等待时间，超过该配置值的话，断路器会从半开状态恢复为开启状态。配置是0时表示断路器会⼀直处于半开状态，直到所有允许通过的访问结束。
-        maxWaitDurationInHalfOpenState: 600000
-        #配置滑动窗⼝的类型，当断路器关闭时，将调⽤的结果记录在滑动窗⼝中。滑动窗⼝的类型可以是count-based或time-based。如果滑动窗⼝类型是COUNT_BASED，将会统计记录最近slidingWindowSize次调⽤的结果。如果是TIME_BASED，将会统计记录最近 slidingWindowSize秒的调⽤结果。
-        slidingWindowType: COUNT_BASED
-        #配置滑动窗⼝的⼤⼩。
-        slidingWindowSize: 100
-        #断路器计算失败率或慢调⽤率之前所需的最⼩调⽤数（每个滑动窗⼝周期）。例如，如果minimumNumberOfCalls为10，则必须⾄少记录10个调⽤，然后才能计算失败率。如果只记录了9次调⽤，即使所有9次调⽤都失败，断路器也不会开启。
-        minimumNumberOfCalls: 5
-        #断路器从开启过渡到半开应等待的时间。
-        waitDurationInOpenState: 60000
-        #不开启监视线程
-        automaticTransitionFromOpenToHalfOpenEnabled: false
-    instances:
-      backendD:
         registerHealthIndicator: true
+        slidingWindowSize: 10	#配置滑动窗⼝的⼤⼩。
+        minimumNumberOfCalls: 5	#断路器计算失败率或慢调⽤率之前所需的最⼩调⽤数（每个滑动窗⼝周期）。例如，如果minimumNumberOfCalls为10，则必须⾄少记录10个调⽤，然后才能计算失败率。如果只记录了9次调⽤，即使所有9次调⽤都失败，断路器也不会开启。
+        permittedNumberOfCallsInHalfOpenState: 3	#断路器在半开状态下允许通过的调⽤次数。
+        automaticTransitionFromOpenToHalfOpenEnabled: true #不开启监视线程
+        waitDurationInOpenState: 5s	#断路器从开启过渡到半开应等待的时间。
+        failureRateThreshold: 50	#以百分⽐配置失败率阈值。当失败率等于或⼤于阈值时，断路器状态并关闭变为开启，并进⾏服务降级。
+        eventConsumerBufferSize: 10
+    instances:
+      backendA:
         baseConfig: default
-        minimumNumberOfCalls: 3
-        slowCallDurationThreshold: 2000
-        permittedNumberOfCallsInHalfOpenState: 1
-  #超时配置
   timelimiter:
     configs:
       default:
-        #超时时间
-        timeoutDuration: 10000
+        timeoutDuration: 3000	#超时时间
     instances:
-      tools:
-        timeoutDuration: 2s
+      backendA:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 3     #总尝试次数
+        waitDuration: 10s    #重试间隔时间
+        enableExponentialBackoff: false    # 是否允许使用指数退避算法进行重试间隔时间的计算
+        exponentialBackoffMultiplier: 2     # 指数退避算法的乘数
+        enableRandomizedWait: false       # 是否允许使用随机的重试间隔
+        randomizedWaitFactor: 0.5         # 随机因子
+        retryExceptions:
+          - java.lang.Exception
+          #- org.springframework.web.client.HttpServerErrorException
+          #- java.util.concurrent.TimeoutException
+          #- java.io.IOException
+        #ignoreExceptions:
+          #- io.github.robwin.exception.BusinessException
+    instances:
+      backendA:
+        baseConfig: default
+        waitDuration: 1 #1毫秒，最小等待时间为1毫秒

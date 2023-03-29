@@ -19,18 +19,24 @@ class ResilienceTest {
     @Autowired
     private CircuitBreakerRegistry circuitBreakerRegistry;
 
-    @Test
+    //@Test
     void test() throws Exception {
         for (int i = 0; i < 100; i++) {
-        	feignServer.test1();
+        	feignServer.sleep(i*1000);
             Thread.sleep(1000);
             status();
         }
     }
+    
+    @Test
+    void testRetry() throws Exception {
+    	feignServer.testRetry();
+        status();
+        Thread.sleep(10000);
+    }
 
     private void status() {
-    	System.out.println(circuitBreakerRegistry);
-    	io.github.resilience4j.circuitbreaker.CircuitBreaker breaker = circuitBreakerRegistry.circuitBreaker("greetingCircuit");
+    	io.github.resilience4j.circuitbreaker.CircuitBreaker breaker = circuitBreakerRegistry.circuitBreaker("backendA");
         Metrics metrics = breaker.getMetrics();
         System.out.println("state="+breaker.getState()+",metrics[failureRate="+metrics.getFailureRate()+",bufferedCalls="+metrics.getNumberOfBufferedCalls()+",failedCalls="+metrics.getNumberOfFailedCalls()+",successCalls="+metrics.getNumberOfSuccessfulCalls()+",maxBufferCalls="+metrics.getNumberOfBufferedCalls()+",notPermittedCalls="+metrics.getNumberOfNotPermittedCalls()+"]");
     }
