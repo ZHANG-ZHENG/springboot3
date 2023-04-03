@@ -1,12 +1,12 @@
 server:
-  port: 6911
+  port: 6921
   servlet:
-    context-path: /${spring.application.name}
+    context-path: /gateway
 spring:
   profiles:
     active: dev
   application:
-    name: nacos-client
+    name: gateway
   cloud:
     nacos:
       discovery:    
@@ -22,7 +22,16 @@ spring:
         #prefix: nacos-config #prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix
         file-extension: yaml
         #refresh-enabled: false #nacos客户端将无法感知配置的变化
-
+    gateway:
+      routes:
+        - id: nacos-server
+          uri: lb://nacos-server
+          predicates:
+            - Path=/nacos-server/**
+        - id: nacos-client
+          uri: lb://nacos-client
+          predicates:
+            - Path=/nacos-client/**
 
 #health：http://localhost:7001/feign-client/actuator/health
 #info：http://localhost:7001/feign-client/actuator/info    
