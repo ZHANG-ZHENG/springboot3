@@ -2,6 +2,7 @@ package com.zz.test.filter;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
@@ -10,11 +11,12 @@ import org.springframework.http.HttpStatus;
 
 import reactor.core.publisher.Mono;
 
-public class CustomGlobalFilter implements GlobalFilter {
+public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
 	/**
 	 * 自定义过滤器
 	 */
+	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		System.out.println("custom global filter");
 		ServerHttpRequest request = exchange.getRequest();
@@ -32,6 +34,12 @@ public class CustomGlobalFilter implements GlobalFilter {
 		
 		
 	}
+
+    // 设置加载优先级，-1：优先级最高
+    @Override
+    public int getOrder() {
+        return 1;
+    }
 
 
 

@@ -6,14 +6,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import com.zz.test.filter.CustomGlobalFilter;
+import com.zz.test.filter.GrayReactiveLoadBalancerClientFilter;
 
 @Configuration
 public class GatewayConfig {
 
-	@Bean
-	//@Order(-1)//值越小过滤器越优先执行
-	public GlobalFilter customFilter() {
-	    return new CustomGlobalFilter();
-	}
+//	@Bean
+//	public GlobalFilter customFilter() {
+//	    return new CustomGlobalFilter();
+//	}
 	
+	@Bean
+	public GrayReactiveLoadBalancerClientFilter grayReactiveLoadBalancerClientFilter() {
+		return new GrayReactiveLoadBalancerClientFilter();
+	}
 }
