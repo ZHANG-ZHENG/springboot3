@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +34,12 @@ public class TestController {
 		ServiceInstance selectedInstance = instances.get(new Random().nextInt(instances.size()));
 		return "Hello World: " + selectedInstance.getServiceId() + ":" + selectedInstance.getHost() + ":" + selectedInstance.getPort();
 	}	
+	@RequestMapping("/test3")
+	public String test3(@RequestHeader(name="X-Request") String xRequest) {
+		System.out.println("X-Request="+xRequest);
+		return "Hello Server " + serverPort + " " + System.currentTimeMillis();
+	}	
+	
 
 	/**
 	 * http://localhost:7000/nacos-server/test/sleep?sleep=2000

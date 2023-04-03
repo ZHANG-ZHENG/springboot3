@@ -27,6 +27,8 @@ spring:
           predicates:
             - Path=/nacos-server/**
             - After=2023-04-03T15:02:00.000+08:00[Asia/Shanghai]
+          filters:
+            - AddRequestHeader=X-Request, token-xx         
         - id: nacos-client
           uri: lb://nacos-client
           predicates:
