@@ -24,14 +24,19 @@ spring:
       default-filters:
         - AddRequestHeader=X-Request, token-zz    
       routes:
+        - id: gateway-nacos-server
+          uri: grayLb://nacos-server
+          predicates:
+            - Path=/gateway/nacos-server/**
+          filters:
+            - StripPrefix=1 # StripPrefix=1就代表截取路径的个数为1, 这样请求/gateway/nacos-server/ 会转发到/nacos-server/  
         - id: nacos-server
           uri: lb://nacos-server
           predicates:
-            - Path=/gateway/nacos-server/**
+            - Path=/nacos-server/**
             - After=2023-04-03T15:02:00.000+08:00[Asia/Shanghai]
           filters:
-            - StripPrefix=1 # StripPrefix=1就代表截取路径的个数为1, 这样请求/gateway/nacos-server/ 会转发到/nacos-server/
-            - AddRequestHeader=X-Request2, token-xx         
+            - AddRequestHeader=X-Request2, token-xx        
         - id: nacos-client
           uri: lb://nacos-client
           predicates:
