@@ -1,7 +1,6 @@
 server:
   port: 6921
 spring:
-  main.web-application-type: reactive
   profiles:
     active: dev
   application:
@@ -27,6 +26,7 @@ spring:
           uri: lb://nacos-server
           predicates:
             - Path=/nacos-server/**
+            - After=2023-04-03T15:02:00.000+08:00[Asia/Shanghai]
         - id: nacos-client
           uri: lb://nacos-client
           predicates:
