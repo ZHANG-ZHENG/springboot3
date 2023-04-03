@@ -21,6 +21,8 @@ spring:
         file-extension: yaml
         #refresh-enabled: false #nacos客户端将无法感知配置的变化
     gateway:
+      default-filters:
+        - AddRequestHeader=X-Request, token-zz    
       routes:
         - id: nacos-server
           uri: lb://nacos-server
@@ -28,7 +30,7 @@ spring:
             - Path=/nacos-server/**
             - After=2023-04-03T15:02:00.000+08:00[Asia/Shanghai]
           filters:
-            - AddRequestHeader=X-Request, token-xx         
+            - AddRequestHeader=X-Request2, token-xx         
         - id: nacos-client
           uri: lb://nacos-client
           predicates:
