@@ -1,6 +1,7 @@
 package com.zz.test.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FeignClientFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,13 @@ public class TestController {
 	@Autowired
 	private FeignServer feignServer;
 	
+	@Autowired
+	private FeignClientFactoryBean feignClientFactoryBean;
+	
 	@RequestMapping("/test1")
 	public String hello() {
+		System.out.println("feignClientFactoryBean="+feignClientFactoryBean);
+
 //		List<ServiceInstance> instances = client.getInstances("HelloServer");
 //		ServiceInstance selectedInstance = instances
 //				.get(new Random().nextInt(instances.size()));
