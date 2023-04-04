@@ -21,12 +21,15 @@ public class TestController {
 	@Value("${server.port:unknow}")
     private String serverPort;
 	
+	@Value("${spring.cloud.nacos.discovery.metadata.gray-version:unknow}")
+    private String grayVersion;
+	
 	@Autowired
 	DiscoveryClient discoveryClient;
 	
 	@RequestMapping("/test1")
 	public String test1() {
-		return "Hello Server " + serverPort + " " + System.currentTimeMillis();
+		return "Hello Server " + serverPort + " " + grayVersion;
 	}
 	@RequestMapping("/test2")
 	public String test2() {
@@ -37,7 +40,7 @@ public class TestController {
 	@RequestMapping("/test3")
 	public String test3(@RequestHeader(name="X-Request") String xRequest) {
 		System.out.println("X-Request="+xRequest);
-		return "Hello Server " + serverPort + " " + System.currentTimeMillis();
+		return "Hello Server " + serverPort + " " + grayVersion;
 	}	
 	
 

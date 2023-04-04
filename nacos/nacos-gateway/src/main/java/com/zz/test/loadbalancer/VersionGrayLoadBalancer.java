@@ -61,10 +61,10 @@ public class VersionGrayLoadBalancer implements ReactorServiceInstanceLoadBalanc
             return processRibbonInstanceResponse(serviceInstanceList);
         }
         for(ServiceInstance serviceInstance : serviceInstanceList) {
-        	System.out.println("serviceInstance version="+serviceInstance.getMetadata().get("version"));
+        	System.out.println("serviceInstance version="+serviceInstance.getMetadata().get("gray-version"));
         }
         List<ServiceInstance> serviceInstances = serviceInstanceList.stream()
-                .filter(instance -> reqVersion.equals(instance.getMetadata().get("version")))
+                .filter(instance -> reqVersion.equals(instance.getMetadata().get("gray-version")))
                 .collect(Collectors.toList());
         if (serviceInstances.size() > 0) {
             return processRibbonInstanceResponse(serviceInstances);

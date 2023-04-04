@@ -15,6 +15,8 @@ spring:
         username: nacos
         #namespace: dev #隔离各个服务，比如dev，test
         #group: MY_GROUP
+        metadata:
+          gray-version: 1.0.0 #灰度发布标记
       config:
         server-addr: 127.0.0.1:8848
         #namespace: dev 
