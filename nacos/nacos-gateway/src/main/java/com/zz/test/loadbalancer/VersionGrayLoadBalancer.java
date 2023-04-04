@@ -48,36 +48,34 @@ public class VersionGrayLoadBalancer implements ReactorServiceInstanceLoadBalanc
     public Mono<Response<ServiceInstance>> choose(Request request) {
         HttpHeaders headers = (HttpHeaders) request.getContext();
         ServiceInstanceListSupplier supplier = this.serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
+        //提供服务列表的Supplier
         return ((Flux) supplier.get()).next().map(list -> processInstanceResponse((List<ServiceInstance>) list, headers));
     }
 
-    private Response<ServiceInstance> processInstanceResponse(List<ServiceInstance> instances, HttpHeaders headers) {
-        if (instances.isEmpty()) {
+    private Response<ServiceInstance> processInstanceResponse(List<ServiceInstance> serviceInstanceList, HttpHeaders headers) {
+        if (serviceInstanceList.isEmpty()) {
             return new EmptyResponse();
-        } else {
-            String reqVersion = headers.getFirst("version");
-
-            if (reqVersion==null || "".equals(reqVersion)) {
-                return processRibbonInstanceResponse(instances);
-            }
-
-            List<ServiceInstance> serviceInstances = instances.stream()
-                    .filter(instance -> reqVersion.equals(instance.getMetadata().get("version")))
-                    .collect(Collectors.toList());
-
-            if (serviceInstances.size() > 0) {
-                return processRibbonInstanceResponse(serviceInstances);
-            } else {
-                return processRibbonInstanceResponse(instances);
-            }
         }
+        String reqVersion = headers.getFirst("version");
+        if (reqVersion==null || "".equals(reqVersion)) {
+            return processRibbonInstanceResponse(serviceInstanceList);
+        }
+        for(ServiceInstance serviceInstance : serviceInstanceList) {
+        	System.out.println("serviceInstance version="+serviceInstance.getMetadata().get("version"));
+        }
+        List<ServiceInstance> serviceInstances = serviceInstanceList.stream()
+                .filter(instance -> reqVersion.equals(instance.getMetadata().get("version")))
+                .collect(Collectors.toList());
+        if (serviceInstances.size() > 0) {
+            return processRibbonInstanceResponse(serviceInstances);
+        }
+        return processRibbonInstanceResponse(serviceInstanceList);
     }
 
     /**
      * 负载均衡器
      * 参考 org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer#getInstanceResponse
      *
-     * @author javadaily
      */
     private Response<ServiceInstance> processRibbonInstanceResponse(List<ServiceInstance> instances) {
         int pos = Math.abs(this.position.incrementAndGet());

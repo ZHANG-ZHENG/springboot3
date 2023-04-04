@@ -2,6 +2,7 @@ package com.zz.test.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools;
 import org.springframework.cloud.client.loadbalancer.DefaultRequest;
@@ -27,14 +28,17 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 /**
- * @author cuishiying
- * @date 2021-01-22
+ * 灰度过滤器
+ * @author zz
+ *
  */
 public class GrayReactiveLoadBalancerClientFilter implements GlobalFilter, Ordered {
 
     private static final Log log = LogFactory.getLog(ReactiveLoadBalancerClientFilter.class);
     private static final int LOAD_BALANCER_CLIENT_FILTER_ORDER = 10150;
-    //private final LoadBalancerClientFactory clientFactory;
+    
+    @Autowired
+    private LoadBalancerClientFactory loadBalancerClientFactory;
 
 //    public GrayReactiveLoadBalancerClientFilter(LoadBalancerClientFactory clientFactory) {
 //        this.clientFactory = clientFactory;
@@ -47,6 +51,7 @@ public class GrayReactiveLoadBalancerClientFilter implements GlobalFilter, Order
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    	System.out.println("loadBalancerClientFactory="+loadBalancerClientFactory);
         URI url = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
         String schemePrefix = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR);
         if (url != null && ("grayLb".equals(url.getScheme()) || "grayLb".equals(schemePrefix))) {
@@ -54,50 +59,45 @@ public class GrayReactiveLoadBalancerClientFilter implements GlobalFilter, Order
             if (log.isTraceEnabled()) {
                 log.trace(ReactiveLoadBalancerClientFilter.class.getSimpleName() + " url before: " + url);
             }
-
-            return this.choose(exchange).doOnNext((response) -> {
+            return this.chooseLoadBalancer(exchange).doOnNext((response) -> {
                 if (!response.hasServer()) {
                     //throw NotFoundException.create(this.properties.isUse404(), "Unable to find instance for " + url.getHost());
                 	throw NotFoundException.create(true, "Unable to find instance for " + url.getHost());
-                } else {
-                    URI uri = exchange.getRequest().getURI();
-                    String overrideScheme = null;
-                    if (schemePrefix != null) {
-                        overrideScheme = url.getScheme();
-                    }
-
-                    DelegatingServiceInstance serviceInstance = new DelegatingServiceInstance((ServiceInstance)response.getServer(), overrideScheme);
-                    URI requestUrl = this.reconstructURI(serviceInstance, uri);
-                    if (log.isTraceEnabled()) {
-                        log.trace("LoadBalancerClientFilter url chosen: " + requestUrl);
-                    }
-
-                    exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR, requestUrl);
                 }
+                URI uri = exchange.getRequest().getURI();
+                String overrideScheme = null;
+                if (schemePrefix != null) {
+                    overrideScheme = url.getScheme();
+                }
+                DelegatingServiceInstance serviceInstance = new DelegatingServiceInstance((ServiceInstance)response.getServer(), overrideScheme);
+                URI requestUrl = LoadBalancerUriTools.reconstructURI(serviceInstance, uri);
+                if (log.isTraceEnabled()) {
+                    log.trace("LoadBalancerClientFilter url chosen: " + requestUrl);
+                }
+                System.out.println("LoadBalancerClientFilter url chosen: " + requestUrl);
+                exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR, requestUrl);
             }).then(chain.filter(exchange));
         } else {
             return chain.filter(exchange);
         }
     }
 
-    protected URI reconstructURI(ServiceInstance serviceInstance, URI original) {
-        return LoadBalancerUriTools.reconstructURI(serviceInstance, original);
-    }
+//    protected URI reconstructURI(ServiceInstance serviceInstance, URI original) {
+//        return LoadBalancerUriTools.reconstructURI(serviceInstance, original);
+//    }
 
-    private Mono<Response<ServiceInstance>> choose(ServerWebExchange exchange) {
+    private Mono<Response<ServiceInstance>> chooseLoadBalancer(ServerWebExchange exchange) {
         URI uri = (URI)exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
-        VersionGrayLoadBalancer loadBalancer = null;
-        //VersionGrayLoadBalancer loadBalancer = new VersionGrayLoadBalancer(clientFactory.getLazyProvider(uri.getHost(), ServiceInstanceListSupplier.class), uri.getHost());
-        if (loadBalancer == null) {
-            throw new NotFoundException("No loadbalancer available for " + uri.getHost());
-        } else {
-            return loadBalancer.choose(this.createRequest(exchange));
-        }
+        VersionGrayLoadBalancer loadBalancer = new VersionGrayLoadBalancer(loadBalancerClientFactory.getLazyProvider(uri.getHost(), ServiceInstanceListSupplier.class), uri.getHost());
+//        if (loadBalancer == null) {
+//            throw new NotFoundException("No loadbalancer available for " + uri.getHost());
+//        }
+        return loadBalancer.choose(this.createRequest(exchange));
     }
 
-    private Request createRequest(ServerWebExchange exchange) {
+    private Request<HttpHeaders> createRequest(ServerWebExchange exchange) {
         HttpHeaders headers = exchange.getRequest().getHeaders();
-        Request<HttpHeaders> request = new DefaultRequest<>(headers);
+        Request<HttpHeaders> request = new DefaultRequest<HttpHeaders>(headers);
         return request;
     }
 }
