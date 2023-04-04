@@ -9,8 +9,8 @@ spring:
     active: dev
   cloud:
     nacos:
+      server-addr: 127.0.0.1:8848
       discovery:    
-        server-addr: 127.0.0.1:8848
         password: nacos
         username: nacos
         #namespace: 037e7e53-4903-4f16-a032-751eecf1f734 #隔离各个服务，比如dev，test
@@ -18,7 +18,6 @@ spring:
         metadata:
           gray-version: 1.0.0 #灰度发布标记
       config:
-        server-addr: 127.0.0.1:8848
         #namespace: 037e7e53-4903-4f16-a032-751eecf1f734 
         #group: TEST_GROUP
         #prefix: nacos-config #prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix
