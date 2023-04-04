@@ -17,6 +17,8 @@ import org.springframework.core.env.Environment;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.loadbalancer.NacosLoadBalancer;
 
+import feign.Logger;
+
 @Configuration
 @EnableFeignClients("com.zz.test.**.feign.**")
 public class FeignConfig {
@@ -34,6 +36,11 @@ public class FeignConfig {
 				.build();
 	}
 
+    @Bean
+    Logger.Level feignLoggerLevel() {
+    	//前提条件,在配置文件中,将日志级别设置为DEBUG.NONE（默认）BASIC HEADERS FULL
+        return Logger.Level.BASIC;
+    }
 //    @Bean
 //    @LoadBalanced
 //    public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment,

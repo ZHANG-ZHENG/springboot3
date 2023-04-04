@@ -17,17 +17,11 @@ management:
       exposure:
         include: '*'
        
+logging:
+  level:
+    root: INFO  # 设置所有目录的日志级别      
+    com.zz.test.server.feign: DEBUG
 feign:
-  client:
-    config:
-      default:
-        connectTimeout: 2000
-        readTimeout: 5000
-        loggerLevel: full
-      timeout10s:
-        connectTimeout: 2000
-        readTimeout: 10000
-        loggerLevel: full
   httpclient:
     enabled: false
   okhttp:
