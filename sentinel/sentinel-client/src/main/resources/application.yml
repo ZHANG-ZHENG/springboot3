@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: sentinel-client
+  cloud:
+    openfeign:
+      lazy-attributes-resolution: true #feign报错 https://blog.csdn.net/qq_32048567/article/details/128880851
+    sentinel:
+      eager: true #取消sentinel懒加载
+      #web-context-unify: false #web资源显示不折叠
+      transport:
+        dashboard: 127.0.0.1:8080 #启动的sentinel的地址和端口    
+server:
+  port: 7001
+  servlet:
+    context-path: /${spring.application.name}
+    
+logging:
+  level:
+    root: INFO  # 设置所有目录的日志级别      
+    com.zz.test.server.feign: DEBUG
+feign: 
+  sentinel:
+    enabled: true
