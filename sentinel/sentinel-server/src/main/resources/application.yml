@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: sentinel-server
+  cloud:
+    sentinel:
+      eager: true #取消sentinel懒加载
+      #web-context-unify: false #web资源显示不折叠
+      transport:
+        dashboard: 127.0.0.1:8080 #启动的sentinel的地址和端口    
+server:
+  port: 7000
+  servlet:
+    context-path: /${spring.application.name}
