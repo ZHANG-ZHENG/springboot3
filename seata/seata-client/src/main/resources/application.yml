@@ -3,6 +3,11 @@ spring:
     active: dev
   application:
     name: seata-client
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.26.180.229:3306/zz_test?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&serverTimezone=${app.defaultTimeZone:Asia/Shanghai}
+    username: root
+    password: Ruijie@Mysql    
 
 server:
   port: 7001
