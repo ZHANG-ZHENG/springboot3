@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: seata-server
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.26.180.229:3306/zz_test?useSSL=false&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&&serverTimezone=${app.defaultTimeZone:Asia/Shanghai}
+    username: root
+    password: Ruijie@Mysql
+
+server:
+  port: 7000
+  servlet:
+    context-path: /${spring.application.name}
+    
+#seata:
+  #data-source-proxy-mode: XA
+  #security:
+    #secretKey: SeataSecretKey0c382ef121d778043159209298fd40bf3850a017

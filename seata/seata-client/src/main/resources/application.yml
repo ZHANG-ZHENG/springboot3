@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: seata-client
+
+server:
+  port: 7001
+  servlet:
+    context-path: /${spring.application.name}
+      
+logging:
+  level:
+    root: INFO  # 设置所有目录的日志级别      
+    com.zz.test.server.feign: DEBUG
+   
